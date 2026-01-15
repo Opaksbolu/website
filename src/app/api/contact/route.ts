@@ -49,10 +49,10 @@ export async function POST(req: Request) {
     // Verify SMTP connection
     await transporter.verify();
 
-    const to = process.env.CONTACT_TO ?? "chung_chul@yahoo.com";
+    const to = process.env.CONTACT_TO ?? "opaksbolu@gmail.com";
 
     const info = await transporter.sendMail({
-      from: `"Jay Portfolio" <${user}>`,
+      from: `"Abdul's Portfolio" <${user}>`,
       to,
       replyTo: { name, address: email },
       subject: `New Contact Form Message from ${name}`,
