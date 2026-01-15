@@ -1,0 +1,318 @@
+"use client";
+
+// Refer to "./app/api/contact/route.ts" for SMTP.
+// Refer to .env.local for SMTP API keys.
+
+
+import * as React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Mail, Rocket, MapPin, Linkedin } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type FormStatus = "idle" | "sending" | "success" | "error";
+
+export const ContactSection = () => {
+  const [fullName, setFullName] = React.useState("");
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [userMessage, setUserMessage] = React.useState("");
+
+  const [status, setStatus] = React.useState<FormStatus>("idle");
+  const [statusMessage, setStatusMessage] = React.useState("");
+
+  const isSending = status === "sending";
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    setStatus("sending");
+    setStatusMessage("Sending...");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: fullName,
+          email: emailAddress,
+          message: userMessage,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setStatus("error");
+        setStatusMessage(data?.detail || data?.error || "Message failed to send.");
+        return;
+      }
+
+      setStatus("success");
+      setStatusMessage("Message sent. Thank you.");
+
+      setFullName("");
+      setEmailAddress("");
+      setUserMessage("");
+    } catch {
+      setStatus("error");
+      setStatusMessage("Message failed to send. Please try again.");
+    }
+  }
+
+  return (
+    <section id="contact" className="py-24 md:py-32 px-6 bg-background">
+      <div className="container max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 gap-6">
+          <div className="space-y-10">
+            <div className="text-center space-y-1">
+              <h2 className="relative inline-block text-xs font-black uppercase tracking-[0.5em] text-accent">
+                <span
+                  aria-hidden
+                  className="
+                    absolute inset-0
+                    text-transparent
+                    [-webkit-text-stroke:0.85px_var(--color-border)]
+                    dark:[-webkit-text-stroke:0.85px_theme(colors.border.muted)]
+                    pointer-events-none
+                  "
+                >
+                  {/* 1 - HEADER TITLE TEXT - "Contact" */}
+                  Contact
+                </span>
+                <span className="relative">Contact</span>
+              </h2>
+
+              <h3 className="text-5xl md:text-6xl font-black tracking-tighter italic leading-[1.05]">
+                <span className="inline-grid overflow-visible">
+                  <span
+                    aria-hidden
+                    className="
+                      col-start-1 row-start-1
+                      text-transparent
+                      [-webkit-text-stroke:1.6px_var(--color-border)]
+                      dark:[-webkit-text-stroke:1.6px_theme(colors.border.muted)]
+                      pointer-events-none
+                      pr-[0.55em]
+                    "
+                  >
+                    {/* 2a - HEADER TITLE TEXT - Outline/Bottom Layer */}
+                    Questions &amp; Inquiries
+                  </span>
+
+                  <span
+                    className="
+                      col-start-1 row-start-1
+                      pr-[0.55em]
+                      bg-linear-to-b from-primary via-primary to-primary/70
+                      bg-clip-text text-transparent
+                    "
+                  >
+                    {/* 2b - HEADER TITLE TEXT - Fill/Top Layer */}
+                    Questions &amp; Inquiries
+                  </span>
+                </span>
+              </h3>
+
+              <p className="text-lg text-muted-foreground font-medium max-w-sm leading-relaxed mx-auto">
+                {/* 3 - BODY PARAGRAPH TEXT */}
+                Insert paragraph here.
+              </p>
+            </div>
+
+            {/* 4 - BUTTONS - Email/Linkedin/HQ */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {[
+                {
+                  icon: Mail,
+                  label: "E-Mail",
+                  value: "",
+                  href: "#", // mailto:<InsertEmailHere>
+                  external: false,
+                },
+                {
+                  icon: Linkedin,
+                  label: "LinkedIn",
+                  value: "",
+                  href: "#", // <Linkedin-Link>
+                  external: true,
+                },
+                {
+                  icon: MapPin,
+                  label: "Headquarters",
+                  value: "",
+                  href: "#", // <https://www.google.com/maps/search/?api=1&query=Dallas,TX>
+                  external: true,
+                },
+              ].map((item, i) => {
+                const Icon = item.icon;
+
+                return (
+                  <div
+                    key={i}
+                    className="flex flex-col items-center text-center gap-3 group"
+                  >
+                    {item.href ? (
+                      <Link
+                        href={item.href}
+                        target={item.external ? "_blank" : undefined}
+                        rel={item.external ? "noopener noreferrer" : undefined}
+                        aria-label={item.label}
+                        className="block"
+                      >
+                        <div className="relative group">
+                          <div className="absolute inset-0 rounded-2xl bg-accent/15 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                          <div className="relative h-14 w-14 rounded-2xl bg-secondary flex items-center justify-center text-primary border border-border/50 transition-all transform group-hover:scale-105 active:scale-95 duration-500 shadow-minimal group-hover:shadow-xl group-hover:border-accent/70 group-hover:bg-accent/15 group-hover:text-foreground">
+                            <Icon className="h-6 w-6" />
+                          </div>
+                        </div>
+                      </Link>
+                    ) : (
+                      <div className="relative group">
+                        <div className="absolute inset-0 rounded-2xl bg-accent/15 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                        <div className="relative h-14 w-14 rounded-2xl bg-secondary flex items-center justify-center text-primary border border-border/50 transition-all duration-500 shadow-minimal group-hover:border-accent/70 group-hover:bg-accent/15 group-hover:text-foreground">
+                          <Icon className="h-6 w-6" />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-0.5">
+                      <p className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50">
+                        {item.label}
+                      </p>
+
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          target={item.external ? "_blank" : undefined}
+                          rel={item.external ? "noopener noreferrer" : undefined}
+                          className="text-lg font-bold tracking-tight hover:text-accent transition-colors underline underline-offset-4 decoration-border/60 hover:decoration-accent"
+                        >
+                          {item.value}
+                        </a>
+                      ) : (
+                        <p className="text-lg font-bold tracking-tight">
+                          {item.value}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* FORM */}
+          <div className="bg-secondary/25 p-3 md:p-20 rounded-[2.5rem] border border-border/60 ring-1 ring-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.35)] relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-3 opacity-10 scale-150 rotate-12 group-hover:rotate-0 transition-all duration-1000">
+              <Rocket className="h-16 w-16" />
+            </div>
+
+            <form onSubmit={handleSubmit} className="relative z-10 space-y-10">
+              <div className="text-center">
+                <h3
+                  className={cn(
+                    "text-center text-3xl md:text-4xl font-black tracking-tight",
+                    "text-foreground transition-colors duration-300",
+                    "group-hover:text-accent group-focus-within:text-accent"
+                  )}
+                >
+                  {/* 5a - FORM TITLE */}
+                  Contact Form:
+                </h3>
+              </div>
+
+              {/* 5a - FORM - "Full Name" */}
+              <div className="space-y-6">
+                <div className="group space-y-2 rounded-2xl border border-border/50 bg-background/10 px-4 py-3 transition-colors hover:border-accent/70 focus-within:border-accent/80">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-1 group-hover:text-accent transition-colors">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Jane Doe" // Name Placeholder
+                    className="w-full bg-transparent border-none p-0 text-lg md:text-xl font-bold text-foreground placeholder:text-foreground/35 focus:ring-0 outline-none"
+                  />
+                </div>
+
+                {/* 5b - FORM - "Email Address" */}
+                <div className="group space-y-2 rounded-2xl border border-border/50 bg-background/10 px-4 py-3 transition-colors hover:border-accent/70 focus-within:border-accent/80">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-1 group-hover:text-accent transition-colors">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={emailAddress}
+                    onChange={(e) => setEmailAddress(e.target.value)}
+                    placeholder="jane.doe@example.com" // Email placeholder
+                    className="w-full bg-transparent border-none p-0 text-lg md:text-xl font-bold text-foreground placeholder:text-foreground/35 focus:ring-0 outline-none"
+                  />
+                </div>
+
+                {/* 5c - FORM - "YOur Message" */}
+                <div className="group space-y-2 rounded-2xl border border-border/50 bg-background/10 px-4 py-3 transition-colors hover:border-accent/70 focus-within:border-accent/80">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-foreground/70 ml-1 group-hover:text-accent transition-colors">
+                    Your Message
+                  </label>
+                  <textarea
+                    required
+                    value={userMessage}
+                    onChange={(e) => setUserMessage(e.target.value)}
+                    placeholder="Describe your vision..." // Message placeholder
+                    className="w-full bg-transparent border-none p-0 text-lg md:text-xl font-bold text-foreground placeholder:text-foreground/35 focus:ring-0 outline-none min-h-37.5 resize-none"
+                  />
+                </div>
+
+                {/* MESSAGE STATUS - SUCCESS/FAIL */}
+                {status !== "idle" && statusMessage && (
+                  <div
+                    className={cn(
+                      "rounded-2xl border px-4 py-3 text-sm font-bold text-center",
+                      status === "success"
+                        ? "border-accent/40 bg-accent/10 text-accent"
+                        : "border-border/60 bg-secondary/40 text-muted-foreground"
+                    )}
+                  >
+                    {statusMessage}
+                  </div>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isSending}
+                className={cn(
+                  "w-full relative overflow-hidden",
+                  "h-14 px-6 md:px-10 rounded-full",
+                  "bg-accent text-white hover:bg-accent",
+                  "font-black uppercase tracking-[0.25em] text-sm",
+                  "border border-accent/40",
+                  "ring-1 ring-white/25 dark:ring-white/10",
+                  "shadow-[0_14px_34px_rgba(0,0,0,0.16)] dark:shadow-[0_18px_50px_rgba(0,0,0,0.45)]",
+                  "transition-all duration-300",
+                  "hover:scale-105 active:scale-[1.02]",
+                  isSending && "opacity-70 cursor-not-allowed hover:scale-100",
+                  "group",
+                  "before:absolute before:inset-0 before:pointer-events-none",
+                  "before:bg-linear-to-b before:from-white/25 before:to-transparent",
+                  "hover:[&>svg]:translate-x-1"
+                )}
+              >
+                <span className="relative z-10">
+                  {isSending ? "Sending..." : "Send Message"}
+                </span>
+                <ArrowRight
+                  size={16}
+                  className="relative z-10 ml-2 transition-transform"
+                />
+              </Button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
