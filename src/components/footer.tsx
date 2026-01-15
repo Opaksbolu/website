@@ -14,8 +14,8 @@ const footerLinks = [
 
 {/* 2 - Github & Linkedin Links */}
 const socialLinks = [
-  { name: "GitHub", href: "#", icon: Github },
-  { name: "LinkedIn", href: "#", icon: Linkedin },
+  { name: "GitHub", href: "https://github.com/Opaksbolu", icon: Github },
+  { name: "LinkedIn", href: "https://www.linkedin.com/in/bolu-opakunle-61aa4b204/", icon: Linkedin },
 ];
 
 export function Footer() {
@@ -87,11 +87,11 @@ export function Footer() {
         <div className="space-y-1">
           <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">
             {/* 3 - Footer Text */}
-            InsertName’s Portfolio
+            Abdul’s Portfolio
           </p>
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/40">
             {/* 4 - Footer copyright notes */}
-            © {year} InsertName. All rights reserved.
+            © {year} Abdul-Azeem Opakunle. All rights reserved.
           </p>
         </div>
       </div>

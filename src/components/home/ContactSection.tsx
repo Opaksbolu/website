@@ -126,21 +126,21 @@ export const ContactSection = () => {
                   icon: Mail,
                   label: "E-Mail",
                   value: "",
-                  href: "#", // mailto:<InsertEmailHere>
+                  href: "opaksbolu@gmail.com", // mailto:<InsertEmailHere>
                   external: false,
                 },
                 {
                   icon: Linkedin,
                   label: "LinkedIn",
                   value: "",
-                  href: "#", // <Linkedin-Link>
+                  href: "https://www.linkedin.com/in/bolu-opakunle-61aa4b204/", // <Linkedin-Link>
                   external: true,
                 },
                 {
                   icon: MapPin,
                   label: "Headquarters",
                   value: "",
-                  href: "#", // <https://www.google.com/maps/search/?api=1&query=Dallas,TX>
+                  href: "https://www.google.com/maps/search/?api=1&query=Anna,TX", // <https://www.google.com/maps/search/?api=1&query=Anna,TX>
                   external: true,
                 },
               ].map((item, i) => {
